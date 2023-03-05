@@ -431,18 +431,22 @@ input[type="radio"]:checked + label span {
 							}
 						}
 					}
-					if(!empty($vper) && $cls!=""){
+					if(!empty($vper)){
 						$aper['answer1'] = !empty($vper['answer1'])?round((count($vper['answer1'])/$tvot)*100, 2):0;
+						$count['answer1'] = !empty($vper['answer1'])?count($vper['answer1']):0;
+						$count['answer2'] = !empty($vper['answer2'])?count($vper['answer2']):0;
+						$count['answer3'] = !empty($vper['answer3'])?count($vper['answer3']):0;
+						$count['answer4'] = !empty($vper['answer4'])?count($vper['answer4']):0;
 						$aper['answer2'] = !empty($vper['answer2'])?round((count($vper['answer2'])/$tvot)*100, 2):0;
 						$aper['answer3'] = !empty($vper['answer3'])?round((count($vper['answer3'])/$tvot)*100, 2):0;
 						$aper['answer4'] = !empty($vper['answer4'])?round((count($vper['answer4'])/$tvot)*100, 2):0;
 					}else{
-						$aper['answer1'] = $aper['answer2'] = $aper['answer3'] = $aper['answer4'] = 0;
+						$count['answer1'] = $count['answer2'] = $count['answer3'] = $count['answer4'] = $aper['answer1'] = $aper['answer2'] = $aper['answer3'] = $aper['answer4'] = 0;
 					}
         	 ?>
-                <div data-perc="<?= $aper[$key2]; ?>" data-tot="<?= $tvot; ?>" class="mm-survey-item  w3-light-grey">
+                <div data-perc="<?= $count[$key2]; ?>" data-tot="<?= $tvot; ?>" class="mm-survey-item  w3-light-grey">
                   <input type="radio" id="radio<?= $key.$key2; ?>" <?= ($ans==$key2)?'checked':''; ?> data-item="<?= $key.$key2; ?>" name="radio<?= $key; ?>" value="<?= $vote->q_id.'_'.$key2; ?>" />
-                  <label class="vote_sngle <?= $cls; ?>" style="position:relative; <?= "width:".$aper[$key2]."%" ?>" for="radio<?= $key.$key2; ?>"><span></span><p><?= $answer; ?></p><b style="<?= ($cls=="")?"display:none;":"" ?>" class="right"><?= $aper[$key2]."%"; ?></b></label>
+                  <label class="vote_sngle <?= $cls; ?>" style="position:relative; <?=  ($cls!="")?"width:".$aper[$key2]."%":""; ?>" for="radio<?= $key.$key2; ?>"><span></span><p><?= $answer; ?></p><b style="<?= ($cls=="")?"display:none;":"" ?>" class="right"><?= $aper[$key2]."%"; ?></b></label>
                 </div>
                 <?php } ?>
                 
@@ -513,15 +517,25 @@ input[type="radio"]:checked + label span {
 			    ans: ans,
 			  },
 			  function(data, status){
-			  	//let per = elm.closest('.mm-survey-item').data('per');
-			  	//let tot = elm.closest('.mm-survey-item').data('tot');
-			  	//let totnw = tot+1;
-			  	//let pernw = (per*totnw/100)+1;
-			  	//elm.closest('.mm-survey-item').data('tot',totnw);
-			  	//elm.closest('.mm-survey-item').data('per',pernw);
-			  	//elm.css('width',pernw);
-			  	//elm.removeClass('w3-blue').addClass('w3-green');
-			  	//elm.find('b').text(pernw+"%");
+			  	
+			  	let tot = parseInt(elm.closest('.mm-survey-item').data('tot'));
+			  	let item_val = elm.closest('.mm-survey-item').find('input').val().trim();
+			  	let totnw = tot+1;
+			  	
+			  	elm.closest('.mm-survery-content').find('.mm-survey-item').each( function(el){
+			  		
+			  		let per = parseInt($(this).data('perc'));
+			  		let pernw = (per/totnw)*100;
+			  		let cls = 'w3-blue';
+			  		if($(this).find('input').val().trim()==item_val){
+						 cls = 'w3-green';
+						 pernw = ((per+1)/totnw)*100;
+					}
+			  		$(this).find('label').removeClass('w3-blue').addClass(cls);
+			  		$(this).find('.vote_sngle').css('width',pernw+'%');
+			  		$(this).find('.vote_sngle b').show().text(pernw.toFixed(2)+"%");
+				});
+			  	
 			  });
 		});
 		
