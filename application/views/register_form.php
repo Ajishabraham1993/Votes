@@ -205,7 +205,7 @@ label {
               <form id="login-form" action="#" method="post" role="form" style="display: block;">
                 <h1 class="text-center">Login to your Account</h1>
                   <br/>
-                  <p style="color: red;" class="error">No user found</p>
+                  <p style="color: red;display: none;" id="login_error" class="login_error">No user found</p>
                   <div class="form-group">
                     <input type="text" name="user_email" id="useremail" tabindex="1" class="form-control" placeholder="Email" value="">
                   </div>
@@ -222,7 +222,7 @@ label {
                 <h1 class="text-center">Register Now</h1>
                 <br/>
                 <p style="color: #00ff00" id="success_message"></p>
-				<p style="color: #ff0000" id="error_message"></p>
+				        <p style="color: #ff0000" id="error_message"></p>
                 <br/>
                   <div class="form-group">
                     <input type="text" name="user_name" id="user_name" tabindex="1" class="form-control" placeholder="Name" value="">
@@ -303,22 +303,26 @@ $(function() {
 	}
 	function login_user() {
 		let email = $('#useremail').val();
+
 		let user_pass = $('#passwrd').val();
-		$('#errormessage').hide();
+		$('#login_error').hide();
 		$('#successmessage').hide();
 		if(!email){	
-			$('#error_message').show();
-			$('#error_message').html('Email is required!');		
+			$('#login_error').html('Email is required!').show();	
 			return false;
 		}
-		if(!ValidateEmail(email)){			
+
+		if(!ValidateEmail(email)){
+      $('#login_error').show();
+      $('#login_error').html('Enter a valid email!');		
 			return false;
 		}
 		if(!user_pass){
-			$('#error_message').show();
-			$('#error_message').html('Password is required!');
+			$('#login_error').show();
+			$('#login_error').html('Password is required!');
 	    	return false;
 		}
+
 		$.post("<?=base_url('register/userpass_validation'); ?>",
 		  {
 		    user_email: email,
